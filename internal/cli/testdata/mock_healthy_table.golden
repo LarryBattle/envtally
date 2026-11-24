@@ -1,0 +1,45 @@
+PROJECT  APP                  ENV   HOST                                                      STATUS  GROUP KEY      TIME
+mock     flask-catalog        dev   127.0.0.1:00000/flask-catalog.dev.na1.example.com         UP      1.5.0          0ms
+mock     flask-catalog        dev   127.0.0.1:00000/flask-catalog.dev.na2.example.com         UP      1.5.0          0ms
+mock     flask-catalog        test  127.0.0.1:00000/flask-catalog.test.na1.example.com        UP      1.4.2          0ms
+mock     flask-catalog        test  127.0.0.1:00000/flask-catalog.test.na2.example.com        UP      1.4.2          0ms
+mock     flask-catalog        prod  127.0.0.1:00000/flask-catalog.prod.na1.example.com        UP      1.4.1          0ms
+mock     flask-catalog        prod  127.0.0.1:00000/flask-catalog.prod.na2.example.com        UP      1.4.1          0ms
+mock     flask-catalog        prod  127.0.0.1:00000/flask-catalog.prod.na3.example.com        UP      1.4.1          0ms
+mock     rails-storefront     dev   127.0.0.1:00000/rails-storefront.dev.na1.example.com      UP      1.5.0|c3d4e5f  0ms
+mock     rails-storefront     dev   127.0.0.1:00000/rails-storefront.dev.na2.example.com      UP      1.5.0|c3d4e5f  0ms
+mock     rails-storefront     test  127.0.0.1:00000/rails-storefront.test.na1.example.com     UP      1.4.2|a1b2c3d  0ms
+mock     rails-storefront     test  127.0.0.1:00000/rails-storefront.test.na2.example.com     UP      1.4.2|a1b2c3d  0ms
+mock     rails-storefront     prod  127.0.0.1:00000/rails-storefront.prod.na1.example.com     UP      1.4.1|9f8e7d6  0ms
+mock     rails-storefront     prod  127.0.0.1:00000/rails-storefront.prod.na2.example.com     UP      1.4.1|9f8e7d6  0ms
+mock     rails-storefront     prod  127.0.0.1:00000/rails-storefront.prod.na3.example.com     UP      1.4.1|9f8e7d6  0ms
+mock     springboot-ledger    dev   127.0.0.1:00000/springboot-ledger.dev.na1.example.com     UP      1.5.0|c3d4e5f  0ms
+mock     springboot-ledger    dev   127.0.0.1:00000/springboot-ledger.dev.na2.example.com     UP      1.5.0|c3d4e5f  0ms
+mock     springboot-ledger    test  127.0.0.1:00000/springboot-ledger.test.na1.example.com    UP      1.4.2|a1b2c3d  0ms
+mock     springboot-ledger    test  127.0.0.1:00000/springboot-ledger.test.na2.example.com    UP      1.4.2|a1b2c3d  0ms
+mock     springboot-ledger    prod  127.0.0.1:00000/springboot-ledger.prod.na1.example.com    UP      1.4.1|9f8e7d6  0ms
+mock     springboot-ledger    prod  127.0.0.1:00000/springboot-ledger.prod.na2.example.com    UP      1.4.1|9f8e7d6  0ms
+mock     springboot-ledger    prod  127.0.0.1:00000/springboot-ledger.prod.na3.example.com    UP      1.4.1|9f8e7d6  0ms
+mock     springboot-payments  dev   127.0.0.1:00000/springboot-payments.dev.na1.example.com   UP      1.5.0|c3d4e5f  0ms
+mock     springboot-payments  dev   127.0.0.1:00000/springboot-payments.dev.na2.example.com   UP      1.5.0|c3d4e5f  0ms
+mock     springboot-payments  test  127.0.0.1:00000/springboot-payments.test.na1.example.com  UP      1.4.2|a1b2c3d  0ms
+mock     springboot-payments  test  127.0.0.1:00000/springboot-payments.test.na2.example.com  UP      1.4.2|a1b2c3d  0ms
+mock     springboot-payments  prod  127.0.0.1:00000/springboot-payments.prod.na1.example.com  UP      1.4.1|9f8e7d6  0ms
+mock     springboot-payments  prod  127.0.0.1:00000/springboot-payments.prod.na2.example.com  UP      1.4.1|9f8e7d6  0ms
+mock     springboot-payments  prod  127.0.0.1:00000/springboot-payments.prod.na3.example.com  UP      1.4.1|9f8e7d6  0ms
+
+SUMMARY
+mock/flask-catalog/dev         ✓ IN SYNC  [1.5.0 ×2]          [0ms, 0ms] min 0ms · avg 0ms · max 0ms
+mock/flask-catalog/test        ✓ IN SYNC  [1.4.2 ×2]          [0ms, 0ms] min 0ms · avg 0ms · max 0ms
+mock/flask-catalog/prod        ✓ IN SYNC  [1.4.1 ×3]          [0ms, 0ms, 0ms] min 0ms · avg 0ms · max 0ms
+mock/rails-storefront/dev      ✓ IN SYNC  [1.5.0|c3d4e5f ×2]  [0ms, 0ms] min 0ms · avg 0ms · max 0ms
+mock/rails-storefront/test     ✓ IN SYNC  [1.4.2|a1b2c3d ×2]  [0ms, 0ms] min 0ms · avg 0ms · max 0ms
+mock/rails-storefront/prod     ✓ IN SYNC  [1.4.1|9f8e7d6 ×3]  [0ms, 0ms, 0ms] min 0ms · avg 0ms · max 0ms
+mock/springboot-ledger/dev     ✓ IN SYNC  [1.5.0|c3d4e5f ×2]  [0ms, 0ms] min 0ms · avg 0ms · max 0ms
+mock/springboot-ledger/test    ✓ IN SYNC  [1.4.2|a1b2c3d ×2]  [0ms, 0ms] min 0ms · avg 0ms · max 0ms
+mock/springboot-ledger/prod    ✓ IN SYNC  [1.4.1|9f8e7d6 ×3]  [0ms, 0ms, 0ms] min 0ms · avg 0ms · max 0ms
+mock/springboot-payments/dev   ✓ IN SYNC  [1.5.0|c3d4e5f ×2]  [0ms, 0ms] min 0ms · avg 0ms · max 0ms
+mock/springboot-payments/test  ✓ IN SYNC  [1.4.2|a1b2c3d ×2]  [0ms, 0ms] min 0ms · avg 0ms · max 0ms
+mock/springboot-payments/prod  ✓ IN SYNC  [1.4.1|9f8e7d6 ×3]  [0ms, 0ms, 0ms] min 0ms · avg 0ms · max 0ms
+
+12 app/envs: 12 in sync

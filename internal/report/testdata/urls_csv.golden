@@ -1,0 +1,3 @@
+project,app,env,url,jenkins,swagger
+billing,payments,dev,https://payments.dev.na1.host.com,https://jenkins.example.com/job/billing/job/payments/,https://payments.dev.na1.host.com/swagger-ui/index.html
+billing,ledger,prod,https://ledger.host.com,https://jenkins.example.com/job/billing/job/ledger/,

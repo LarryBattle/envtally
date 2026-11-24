@@ -1,0 +1,30 @@
+{
+  "$schema": "../envtally.schema.json",
+  "defaults": { "profile": "springboot" },
+  "envOrder": ["dev", "test", "prod"],
+  "templates": {
+    "jenkins": "https://jenkins.example.com/job/${project}/job/${app}/"
+  },
+  "profiles": {
+    "springboot": {
+      "healthPath": "/actuator/health",
+      "infoPath": "/actuator/info",
+      "healthyWhen": { "field": "status", "equals": "UP" },
+      "groupKey": "${build.version}|${git.commit.id}"
+    }
+  },
+  "projects": {
+    "shop": {
+      "description": "Spring Boot: needs Actuator with the health and info endpoints exposed, plus build-info and git-commit-id for the group key.",
+      "apps": {
+        "catalog": {
+          "envs": {
+            "dev": ["https://catalog.dev.a.example.com", "https://catalog.dev.b.example.com"],
+            "test": "https://catalog.test.example.com",
+            "prod": ["https://catalog.a.example.com", "https://catalog.b.example.com"]
+          }
+        }
+      }
+    }
+  }
+}

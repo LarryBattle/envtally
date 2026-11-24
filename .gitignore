@@ -32,3 +32,13 @@ go.work.sum
 # Editor/IDE
 # .idea/
 # .vscode/
+
+# Build output
+bin/
+dist/
+
+# Task (taskfile.dev) cache
+.task/
+
+# Config written by the README mock-server walkthrough
+/mock.json

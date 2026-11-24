@@ -1,0 +1,29 @@
+{
+  "$schema": "../envtally.schema.json",
+  "defaults": { "profile": "rails" },
+  "envOrder": ["dev", "test", "prod"],
+  "templates": {
+    "jenkins": "https://jenkins.example.com/job/${project}/job/${app}/"
+  },
+  "profiles": {
+    "rails": {
+      "healthPath": "/up",
+      "infoPath": "/version",
+      "groupKey": "${version}|${revision}"
+    }
+  },
+  "projects": {
+    "shop": {
+      "description": "Rails: /up is the built-in health check (Rails 7.1+). /version is a JSON endpoint you add, e.g. {\"version\":\"2.3.0\",\"revision\":\"a1b2c3d\"}.",
+      "apps": {
+        "catalog": {
+          "envs": {
+            "dev": ["https://catalog.dev.a.example.com", "https://catalog.dev.b.example.com"],
+            "test": "https://catalog.test.example.com",
+            "prod": ["https://catalog.a.example.com", "https://catalog.b.example.com"]
+          }
+        }
+      }
+    }
+  }
+}

@@ -1,0 +1,8 @@
+project,app,env,url,host,instance_status,group_key,env_status,health_ms,info_ms,total_ms,slow,detail
+billing,payments,dev,https://payments.dev.na1.host.com,payments.dev.na1.host.com,UP,1.4.2|a1b2,DRIFT,60,50,110,false,
+billing,payments,dev,https://payments.dev.na2.host.com,payments.dev.na2.host.com,UP,1.4.1|9f8e,DRIFT,50,45,95,false,
+billing,payments,prod,https://payments.na1.host.com,payments.na1.host.com,UP,1.4.1|9f8e,IN SYNC,40,58,98,false,
+billing,payments,prod,https://payments.na2.host.com,payments.na2.host.com,UP,1.4.1|9f8e,IN SYNC,700,500,1200,true,
+billing,ledger,dev,https://ledger.dev.na1.host.com,ledger.dev.na1.host.com,UP,2.0.0|77aa,DOWN,30,31,61,false,
+billing,ledger,dev,https://ledger.dev.na2.host.com,ledger.dev.na2.host.com,DOWN,,DOWN,12,0,12,false,HTTP 503
+billing,ledger,prod,https://ledger.host.com,ledger.host.com,UP,2.0.0|?,UNKNOWN,20,22,42,false,

@@ -1,0 +1,165 @@
+{
+  "ok": false,
+  "groupKeyTemplates": {
+    "springboot": "${build.version}|${git.commit.id}"
+  },
+  "envs": [
+    {
+      "project": "billing",
+      "app": "payments",
+      "env": "dev",
+      "status": "DRIFT",
+      "keys": [
+        {
+          "key": "1.4.1|9f8e",
+          "count": 1
+        },
+        {
+          "key": "1.4.2|a1b2",
+          "count": 1
+        }
+      ],
+      "minMs": 95,
+      "avgMs": 102,
+      "maxMs": 110,
+      "instances": [
+        {
+          "url": "https://payments.dev.na1.host.com",
+          "host": "payments.dev.na1.host.com",
+          "profile": "springboot",
+          "status": "UP",
+          "groupKey": "1.4.2|a1b2",
+          "keyComplete": true,
+          "healthMs": 60,
+          "infoMs": 50,
+          "totalMs": 110,
+          "slow": false
+        },
+        {
+          "url": "https://payments.dev.na2.host.com",
+          "host": "payments.dev.na2.host.com",
+          "profile": "springboot",
+          "status": "UP",
+          "groupKey": "1.4.1|9f8e",
+          "keyComplete": true,
+          "healthMs": 50,
+          "infoMs": 45,
+          "totalMs": 95,
+          "slow": false
+        }
+      ]
+    },
+    {
+      "project": "billing",
+      "app": "payments",
+      "env": "prod",
+      "status": "IN SYNC",
+      "keys": [
+        {
+          "key": "1.4.1|9f8e",
+          "count": 2
+        }
+      ],
+      "minMs": 98,
+      "avgMs": 649,
+      "maxMs": 1200,
+      "instances": [
+        {
+          "url": "https://payments.na1.host.com",
+          "host": "payments.na1.host.com",
+          "profile": "springboot",
+          "status": "UP",
+          "groupKey": "1.4.1|9f8e",
+          "keyComplete": true,
+          "healthMs": 40,
+          "infoMs": 58,
+          "totalMs": 98,
+          "slow": false
+        },
+        {
+          "url": "https://payments.na2.host.com",
+          "host": "payments.na2.host.com",
+          "profile": "springboot",
+          "status": "UP",
+          "groupKey": "1.4.1|9f8e",
+          "keyComplete": true,
+          "healthMs": 700,
+          "infoMs": 500,
+          "totalMs": 1200,
+          "slow": true
+        }
+      ]
+    },
+    {
+      "project": "billing",
+      "app": "ledger",
+      "env": "dev",
+      "status": "DOWN",
+      "keys": [
+        {
+          "key": "2.0.0|77aa",
+          "count": 1
+        }
+      ],
+      "minMs": 61,
+      "avgMs": 61,
+      "maxMs": 61,
+      "instances": [
+        {
+          "url": "https://ledger.dev.na1.host.com",
+          "host": "ledger.dev.na1.host.com",
+          "profile": "springboot",
+          "status": "UP",
+          "groupKey": "2.0.0|77aa",
+          "keyComplete": true,
+          "healthMs": 30,
+          "infoMs": 31,
+          "totalMs": 61,
+          "slow": false
+        },
+        {
+          "url": "https://ledger.dev.na2.host.com",
+          "host": "ledger.dev.na2.host.com",
+          "profile": "springboot",
+          "status": "DOWN",
+          "detail": "HTTP 503",
+          "groupKey": "",
+          "keyComplete": false,
+          "healthMs": 12,
+          "infoMs": 0,
+          "totalMs": 12,
+          "slow": false
+        }
+      ]
+    },
+    {
+      "project": "billing",
+      "app": "ledger",
+      "env": "prod",
+      "status": "UNKNOWN",
+      "keys": [
+        {
+          "key": "2.0.0|?",
+          "count": 1
+        }
+      ],
+      "minMs": 42,
+      "avgMs": 42,
+      "maxMs": 42,
+      "instances": [
+        {
+          "url": "https://ledger.host.com",
+          "host": "ledger.host.com",
+          "profile": "springboot",
+          "status": "UP",
+          "groupKey": "2.0.0|?",
+          "keyComplete": false,
+          "healthMs": 20,
+          "infoMs": 22,
+          "totalMs": 42,
+          "slow": false
+        }
+      ]
+    }
+  ]
+}

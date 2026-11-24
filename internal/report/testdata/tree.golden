@@ -1,0 +1,16 @@
+billing
+  payments
+    dev  ✗ DRIFT  [1.4.1|9f8e ×1] [1.4.2|a1b2 ×1]  [110ms, 95ms] min 95ms · avg 103ms · max 110ms
+      payments.dev.na1.host.com  UP  1.4.2|a1b2  110ms
+      payments.dev.na2.host.com  UP  1.4.1|9f8e  95ms
+    prod  ✓ IN SYNC  [1.4.1|9f8e ×2]  [98ms, 1.2s] min 98ms · avg 649ms · max 1.2s
+      payments.na1.host.com  UP  1.4.1|9f8e  98ms
+      payments.na2.host.com  UP  1.4.1|9f8e  1.2s (slow)
+  ledger
+    dev  ✗ DOWN  [ledger.dev.na2.host.com DOWN: HTTP 503] [2.0.0|77aa ×1]  [61ms] min 61ms · avg 61ms · max 61ms
+      ledger.dev.na1.host.com  UP    2.0.0|77aa  61ms
+      ledger.dev.na2.host.com  DOWN  -           12ms
+    prod  ? UNKNOWN  [2.0.0|? ×1]  [42ms] min 42ms · avg 42ms · max 42ms
+      ledger.host.com  UP  2.0.0|?  42ms
+
+4 app/envs: 1 in sync, 1 drift, 1 unknown, 1 down

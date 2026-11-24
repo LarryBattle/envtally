@@ -1,0 +1,116 @@
+# https://taskfile.dev  (install: https://taskfile.dev/installation/)
+version: '3'
+
+vars:
+  BIN: bin/envtally{{exeExt}}
+  MOCK_BIN: bin/mock-proxy-server{{exeExt}}
+  # Extra mock-proxy-server options, e.g. MOCK_ARGS="--profile drift" or "-c my.json -p 9000".
+  MOCK_ARGS: '{{.MOCK_ARGS | default ""}}'
+
+env:
+  CGO_ENABLED: '0'
+
+tasks:
+  default:
+    desc: Format, lint, test and build
+    cmds:
+      - task: fmt
+      - task: lint
+      - task: test
+      - task: build
+
+  build:
+    desc: Build bin/envtally and bin/mock-proxy-server for this machine
+    sources:
+      - '**/*.go'
+      - go.mod
+      - go.sum
+      - envtally.schema.json
+      - envtally.example.json
+      - envtally.example.full.json
+      - internal/mockserver/default.json
+    generates:
+      - '{{.BIN}}'
+      - '{{.MOCK_BIN}}'
+    cmds:
+      - go build -trimpath -o {{.BIN}} ./cmd/envtally
+      - go build -trimpath -o {{.MOCK_BIN}} ./cmd/mock-proxy-server
+
+  mock:
+    desc: Run the mock server (fake Flask, Rails and Spring Boot apps); pick a profile with MOCK_ARGS="--profile drift"
+    deps: [build]
+    cmds:
+      - '{{.MOCK_BIN}} {{.MOCK_ARGS}}'
+
+  mock-check:
+    desc: Run envtally against a running mock server (start it with `task mock`)
+    deps: [build]
+    env:
+      ENVTALLY_CONFIG: bin/mock.json
+    cmds:
+      - '{{.MOCK_BIN}} envtally {{.MOCK_ARGS}} > bin/mock.json'
+      # Exit 1 is expected: most profiles include drift or failures.
+      - cmd: '{{.BIN}} check {{.CLI_ARGS}}'
+        ignore_error: true
+
+  test:
+    desc: Run all tests
+    sources:
+      - '**/*.go'
+      - go.mod
+      - go.sum
+      - '*.json'
+      - examples/*.json
+      - internal/report/testdata/*
+      - internal/cli/testdata/*
+      - internal/mockserver/default.json
+    cmds:
+      - go test ./...
+
+  test-update:
+    desc: Rewrite the golden files after an intended output change
+    cmds:
+      - go test ./internal/report ./internal/cli -update
+
+  lint:
+    desc: Run go vet
+    sources:
+      - '**/*.go'
+      - go.mod
+    cmds:
+      - go vet ./...
+
+  fmt:
+    desc: Format the code
+    sources:
+      - '**/*.go'
+    cmds:
+      - gofmt -w cmd internal embed.go
+
+  cross-build:
+    desc: Build every OS/ARCH into dist/
+    sources:
+      - '**/*.go'
+      - go.mod
+      - go.sum
+      - envtally.schema.json
+      - envtally.example.json
+      - envtally.example.full.json
+    generates:
+      - dist/envtally-*
+    cmds:
+      - for:
+          matrix:
+            OS: [linux, darwin, windows]
+            ARCH: [amd64, arm64]
+        cmd: GOOS={{.ITEM.OS}} GOARCH={{.ITEM.ARCH}} go build -trimpath -o dist/envtally-{{.ITEM.OS}}-{{.ITEM.ARCH}}{{if eq .ITEM.OS "windows"}}.exe{{end}} ./cmd/envtally
+
+  release-build:
+    desc: Build the release archives and checksums into dist/, as CI does (needs sh, tar, zip)
+    cmds:
+      - sh .github/release-build.sh {{.CLI_ARGS}}
+
+  clean:
+    desc: Remove build output
+    cmds:
+      - rm -rf bin dist

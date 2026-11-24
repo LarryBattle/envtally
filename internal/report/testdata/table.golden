@@ -1,0 +1,16 @@
+PROJECT  APP       ENV   HOST                       STATUS  GROUP KEY   TIME
+billing  payments  dev   payments.dev.na1.host.com  UP      1.4.2|a1b2  110ms
+billing  payments  dev   payments.dev.na2.host.com  UP      1.4.1|9f8e  95ms
+billing  payments  prod  payments.na1.host.com      UP      1.4.1|9f8e  98ms
+billing  payments  prod  payments.na2.host.com      UP      1.4.1|9f8e  1.2s (slow)
+billing  ledger    dev   ledger.dev.na1.host.com    UP      2.0.0|77aa  61ms
+billing  ledger    dev   ledger.dev.na2.host.com    DOWN    -           12ms
+billing  ledger    prod  ledger.host.com            UP      2.0.0|?     42ms
+
+SUMMARY
+billing/payments/dev   ✗ DRIFT    [1.4.1|9f8e ×1] [1.4.2|a1b2 ×1]                           [110ms, 95ms] min 95ms · avg 103ms · max 110ms
+billing/payments/prod  ✓ IN SYNC  [1.4.1|9f8e ×2]                                           [98ms, 1.2s] min 98ms · avg 649ms · max 1.2s
+billing/ledger/dev     ✗ DOWN     [ledger.dev.na2.host.com DOWN: HTTP 503] [2.0.0|77aa ×1]  [61ms] min 61ms · avg 61ms · max 61ms
+billing/ledger/prod    ? UNKNOWN  [2.0.0|? ×1]                                              [42ms] min 42ms · avg 42ms · max 42ms
+
+4 app/envs: 1 in sync, 1 drift, 1 unknown, 1 down

@@ -1,0 +1,49 @@
+{
+  "$schema": "./envtally.schema.json",
+  ".comment": [
+    "Starter config. Any key that starts with .comment is a note for you: envtally ignores it, and you can delete or add them anywhere.",
+    "1. Replace the example project, app and URLs below with your own.",
+    "2. Run: envtally config validate   (catches typos)",
+    "3. Run: envtally check             (calls every URL and reports)",
+    "Need auth headers, an app without a version endpoint (Jenkins, ...) or your own app type?",
+    "Run: envtally init --example full --print   to see a config with all of those explained."
+  ],
+
+  "defaults": {
+    ".comment": [
+      "profile = the app type used by every app that does not set its own.",
+      "A profile says which paths to call and how to read the version. Built in:",
+      "  springboot  /actuator/health + /actuator/info",
+      "  rails       /up + /version",
+      "  flask       /health + /info"
+    ],
+    "profile": "springboot"
+  },
+
+  ".comment-envOrder": "The order envs are shown in. Envs not listed come after, alphabetically.",
+  "envOrder": ["dev", "test", "prod"],
+
+  "projects": {
+    ".comment": [
+      "The layout is: project -> apps -> envs -> instance URLs. All names are yours to choose.",
+      "envtally calls every instance URL of an app/env and compares the versions they report:",
+      "all the same = IN SYNC, different = DRIFT, any instance not answering = DOWN."
+    ],
+    "billing": {
+      "description": "Billing team services",
+      "apps": {
+        "payments": {
+          ".comment": [
+            "Each env takes one URL, or a list when the env runs several instances.",
+            "Give the base URL only. The profile adds the path, e.g. /actuator/health."
+          ],
+          "envs": {
+            "dev": ["https://payments.dev.na1.host.com", "https://payments.dev.na2.host.com"],
+            "test": ["https://payments.test.na1.host.com"],
+            "prod": "https://payments.host.com"
+          }
+        }
+      }
+    }
+  }
+}

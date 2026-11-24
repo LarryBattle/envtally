@@ -1,0 +1,21 @@
+[
+  {
+    "project": "billing",
+    "app": "payments",
+    "env": "dev",
+    "url": "https://payments.dev.na1.host.com",
+    "links": {
+      "jenkins": "https://jenkins.example.com/job/billing/job/payments/",
+      "swagger": "https://payments.dev.na1.host.com/swagger-ui/index.html"
+    }
+  },
+  {
+    "project": "billing",
+    "app": "ledger",
+    "env": "prod",
+    "url": "https://ledger.host.com",
+    "links": {
+      "jenkins": "https://jenkins.example.com/job/billing/job/ledger/"
+    }
+  }
+]

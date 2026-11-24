@@ -1,0 +1,161 @@
+{
+  "$schema": "./envtally.schema.json",
+  ".comment": [
+    "Full example: every setting, plus three common setups (see profiles).",
+    "Any key that starts with .comment is a note for you: envtally ignores it, and you can delete or add them anywhere.",
+    "Replace the example names and URLs, then run: envtally config validate"
+  ],
+
+  "defaults": {
+    ".comment": [
+      "Global settings. Every one is optional; the values here are the built-in defaults",
+      "(except profile, which has none). Command-line flags override them."
+    ],
+    ".comment-output": "table, tree, compact, markdown, csv or json. Flag: --format",
+    "output": "table",
+    ".comment-profile": "The app type for apps that do not set \"profile\" themselves. See profiles below.",
+    "profile": "springboot",
+    ".comment-concurrency": "How many requests run at the same time.",
+    "concurrency": 10,
+    ".comment-timeout": "How long to wait for one response: 500ms, 5s, 1m.",
+    "timeout": "5s",
+    ".comment-retries": "Extra tries when no response arrives at all (refused, timeout). An HTTP answer, even a 500, is never retried.",
+    "retries": 1,
+    ".comment-insecure": "true = accept self-signed or otherwise invalid TLS certificates.",
+    "insecure": false,
+    ".comment-slowThreshold": "An instance slower than this is marked (slow). It does not fail the check.",
+    "slowThreshold": "1s"
+  },
+
+  ".comment-envOrder": "The order envs are shown in. Envs not listed come after, alphabetically.",
+  "envOrder": ["dev", "test", "prod"],
+
+  "vars": {
+    ".comment": [
+      "Your own fixed values. Write ${name} to use one in a link template or a header value.",
+      "Do not put secrets here; use ${env:NAME} in a header instead (see the internal-api profile)."
+    ],
+    "jenkins_host": "https://jenkins.example.com",
+    "team": "billing"
+  },
+
+  "templates": {
+    ".comment": [
+      "Links printed by: envtally urls   (envtally never calls them). Name them as you like.",
+      "Available: ${project} ${app} ${env} ${host} ${base_url} and anything in vars.",
+      "A project or an app can have its own \"templates\" to override these."
+    ],
+    "swagger": "${base_url}/swagger-ui/index.html",
+    "jenkins": "${jenkins_host}/job/${project}/job/${app}/"
+  },
+
+  "profiles": {
+    ".comment": [
+      "A profile describes one type of app: which paths to call and how to read its version.",
+      "springboot, rails and flask are built in and need no entry here.",
+      "The three below show the common cases. An app picks one with \"profile\": \"<name>\"."
+    ],
+
+    "springboot": {
+      ".comment": "Setup 1: a JSON version endpoint. This is the built-in springboot profile written out, as a reference for your own.",
+      "description": "Spring Boot Actuator",
+      ".comment-healthPath": "Added to each instance URL. The instance is up when this answers HTTP 2xx.",
+      "healthPath": "/actuator/health",
+      ".comment-healthyWhen": "Optional extra rule: the health JSON must also have this field with this value.",
+      "healthyWhen": { "field": "status", "equals": "UP" },
+      ".comment-infoPath": "Optional second endpoint, called when health passed. The group key is read from its JSON.",
+      "infoPath": "/actuator/info",
+      ".comment-groupKey": [
+        "What to compare between instances. Each ${a.b} is a field of the info JSON,",
+        "so {\"build\": {\"version\": \"1.4.2\"}, \"git\": {\"commit\": {\"id\": \"a1b2\"}}} gives 1.4.2|a1b2.",
+        "Instances of one app/env with the same key are IN SYNC; different keys are DRIFT."
+      ],
+      "groupKey": "${build.version}|${git.commit.id}"
+    },
+
+    "jenkins": {
+      ".comment": [
+        "Setup 2: status only, for apps with no version endpoint (Jenkins, Grafana, a static site, ...).",
+        "There is no groupKey, so nothing is compared: the app is UP when the path answers HTTP 2xx.",
+        "The response body can be anything (HTML is fine). Add an infoPath to require a second path to answer 2xx too."
+      ],
+      "description": "Jenkins: up when the login page loads",
+      "healthPath": "/login"
+    },
+
+    "internal-api": {
+      ".comment": "Setup 3: your own app type, behind authentication.",
+      "description": "Services with /healthz and /meta that need a token",
+      "healthPath": "/healthz",
+      "healthyWhen": { "field": "ok", "equals": "true" },
+      "infoPath": "/meta",
+      "groupKey": "${version}",
+      "headers": {
+        ".comment": [
+          "HTTP request headers, sent with every health and info request for apps using this profile.",
+          "Left side: the header name. Right side: its value.",
+          "",
+          "${env:NAME} is replaced by the environment variable NAME when envtally runs,",
+          "so the secret is never stored in this file. Set it in your shell first:",
+          "  PowerShell:  $env:INTERNAL_API_TOKEN = \"abc123\"",
+          "  bash / zsh:  export INTERNAL_API_TOKEN=abc123",
+          "With that, the line below sends   Authorization: Bearer abc123",
+          "If the variable is not set, envtally check stops and names it.",
+          "${team} is a plain value from vars above.",
+          "",
+          "Other common forms:",
+          "  API key:     \"X-Api-Key\": \"${env:MY_API_KEY}\"",
+          "  Basic auth:  \"Authorization\": \"Basic ${env:MY_BASIC_AUTH}\"   (the variable holds base64 of user:password)",
+          "  Fixed value: \"X-Client\": \"envtally\"",
+          "To see what is sent: envtally check -vv   (header values are shown as [REDACTED])."
+        ],
+        "Authorization": "Bearer ${env:INTERNAL_API_TOKEN}",
+        "X-Team": "${team}"
+      }
+    }
+  },
+
+  "projects": {
+    ".comment": "The layout is: project -> apps -> envs -> instance URLs. All names are yours to choose.",
+    "billing": {
+      "description": "Billing team services",
+      "templates": {
+        ".comment": "Overrides the top-level jenkins link for every app in this project.",
+        "jenkins": "${jenkins_host}/job/billing-team/job/${app}/"
+      },
+      "apps": {
+        "payments": {
+          ".comment": [
+            "No \"profile\" here, so defaults.profile (springboot) is used.",
+            "Each env takes one URL, or a list when the env runs several instances."
+          ],
+          "envs": {
+            "dev": ["https://payments.dev.na1.host.com", "https://payments.dev.na2.host.com"],
+            "test": ["https://payments.test.na1.host.com"],
+            "prod": "https://payments.host.com"
+          }
+        },
+        "ledger": {
+          ".comment": "Uses the token-protected profile. A URL may include a path, e.g. behind a gateway.",
+          "profile": "internal-api",
+          "envs": {
+            "dev": "https://gateway.dev.host.com/ledger",
+            "prod": ["https://gateway.na1.host.com/ledger", "https://gateway.na2.host.com/ledger"]
+          }
+        }
+      }
+    },
+    "tools": {
+      "description": "Shared tooling",
+      "apps": {
+        "jenkins": {
+          ".comment": "Status only: reported as UP or DOWN, never IN SYNC or DRIFT.",
+          "profile": "jenkins",
+          "envs": {
+            "prod": "https://jenkins.example.com"
+          }
+        }
+      }
+    }
+  }
+}

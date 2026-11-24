@@ -1,0 +1,185 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://raw.githubusercontent.com/LarryBattle/envtally/main/envtally.schema.json",
+  "title": "envtally config",
+  "description": "Any key that starts with .comment is a note for people and is ignored, in every object.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["projects"],
+  "patternProperties": { "^\\.comment": { "$ref": "#/definitions/comment" } },
+  "properties": {
+    "$schema": { "type": "string" },
+    "defaults": {
+      "type": "object",
+      "description": "Global settings. Command-line flags override them.",
+      "additionalProperties": false,
+      "patternProperties": { "^\\.comment": { "$ref": "#/definitions/comment" } },
+      "properties": {
+        "output": {
+          "description": "Default output style.",
+          "enum": ["table", "tree", "compact", "markdown", "csv", "json"],
+          "default": "table"
+        },
+        "profile": {
+          "type": "string",
+          "description": "Profile for apps that do not set one. Built in: springboot, rails, flask."
+        },
+        "concurrency": {
+          "type": "integer",
+          "minimum": 1,
+          "default": 10,
+          "description": "Parallel requests."
+        },
+        "timeout": {
+          "$ref": "#/definitions/duration",
+          "default": "5s",
+          "description": "Per-request timeout."
+        },
+        "retries": {
+          "type": "integer",
+          "minimum": 0,
+          "default": 1,
+          "description": "Retries when no HTTP response arrives (connection error, timeout). An HTTP response, 5xx included, is never retried."
+        },
+        "insecure": {
+          "type": "boolean",
+          "default": false,
+          "description": "Skip TLS certificate verification."
+        },
+        "slowThreshold": {
+          "$ref": "#/definitions/duration",
+          "default": "1s",
+          "description": "Instances whose total response time exceeds this are marked slow."
+        }
+      }
+    },
+    "envOrder": {
+      "type": "array",
+      "description": "Display order of envs, e.g. [\"dev\", \"test\", \"prod\"]. Envs not listed follow in alphabetical order.",
+      "items": { "type": "string" },
+      "uniqueItems": true
+    },
+    "vars": {
+      "type": "object",
+      "description": "Literal values usable as ${name} in link templates and header values.",
+      "patternProperties": { "^\\.comment": { "$ref": "#/definitions/comment" } },
+      "additionalProperties": { "type": "string" }
+    },
+    "templates": { "$ref": "#/definitions/templates" },
+    "profiles": {
+      "type": "object",
+      "description": "App types. A profile named springboot, rails or flask replaces the built-in one.",
+      "patternProperties": { "^\\.comment": { "$ref": "#/definitions/comment" } },
+      "additionalProperties": { "$ref": "#/definitions/profile" }
+    },
+    "projects": {
+      "type": "object",
+      "description": "Project name -> its apps.",
+      "patternProperties": { "^\\.comment": { "$ref": "#/definitions/comment" } },
+      "additionalProperties": { "$ref": "#/definitions/project" }
+    }
+  },
+  "definitions": {
+    "comment": {
+      "description": "A note for people. envtally ignores it. One string, or an array of strings for several lines.",
+      "oneOf": [
+        { "type": "string" },
+        { "type": "array", "items": { "type": "string" } }
+      ]
+    },
+    "duration": {
+      "type": "string",
+      "description": "Go duration: 500ms, 5s, 1m, 1m30s.",
+      "pattern": "^([0-9]+(\\.[0-9]+)?(ns|us|µs|ms|s|m|h))+$"
+    },
+    "templates": {
+      "type": "object",
+      "description": "Named links printed by `envtally urls`, e.g. swagger and jenkins. Each is a pattern or a literal URL. Variables: ${project} ${app} ${env} ${host} ${base_url} and anything in vars. Override order: global, then project, then app.",
+      "patternProperties": { "^\\.comment": { "$ref": "#/definitions/comment" } },
+      "additionalProperties": { "type": "string" }
+    },
+    "profile": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["healthPath"],
+      "patternProperties": { "^\\.comment": { "$ref": "#/definitions/comment" } },
+      "properties": {
+        "description": { "type": "string" },
+        "healthPath": {
+          "type": "string",
+          "pattern": "^/",
+          "description": "Path appended to the instance URL. Healthy = HTTP 2xx (and healthyWhen, if set). The body can be anything unless healthyWhen or groupKey reads it."
+        },
+        "infoPath": {
+          "type": "string",
+          "pattern": "^/",
+          "description": "Optional second endpoint, called when health passed. It must answer HTTP 2xx. With a groupKey, the key is built from its JSON (without infoPath, from the health JSON)."
+        },
+        "healthyWhen": {
+          "type": "object",
+          "description": "Also require a field of the health JSON to equal a value.",
+          "additionalProperties": false,
+          "required": ["field", "equals"],
+          "patternProperties": { "^\\.comment": { "$ref": "#/definitions/comment" } },
+          "properties": {
+            "field": { "type": "string", "minLength": 1, "description": "Dot-path, e.g. status" },
+            "equals": { "type": "string" }
+          }
+        },
+        "groupKey": {
+          "type": "string",
+          "pattern": "\\$\\{[^{}]+\\}",
+          "description": "Optional. Template of dot-paths into the response JSON, e.g. ${build.version}|${git.commit.id}. A missing field renders as ? and marks the env UNKNOWN. Leave it out for a status-only profile: HTTP 2xx means UP and no versions are compared (for apps without a JSON version endpoint, such as Jenkins)."
+        },
+        "headers": {
+          "type": "object",
+          "description": "HTTP request headers sent with every health and info request of this profile: header name -> value. In a value, ${env:NAME} is replaced by the OS environment variable NAME (use it for secrets) and ${name} by a value from vars. Example: { \"Authorization\": \"Bearer ${env:API_TOKEN}\" }, after `export API_TOKEN=...` (bash) or `$env:API_TOKEN = \"...\"` (PowerShell).",
+          "patternProperties": { "^\\.comment": { "$ref": "#/definitions/comment" } },
+          "additionalProperties": { "type": "string" }
+        }
+      }
+    },
+    "project": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["apps"],
+      "patternProperties": { "^\\.comment": { "$ref": "#/definitions/comment" } },
+      "properties": {
+        "description": { "type": "string" },
+        "templates": { "$ref": "#/definitions/templates" },
+        "apps": {
+          "type": "object",
+          "patternProperties": { "^\\.comment": { "$ref": "#/definitions/comment" } },
+          "additionalProperties": { "$ref": "#/definitions/app" }
+        }
+      }
+    },
+    "app": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["envs"],
+      "patternProperties": { "^\\.comment": { "$ref": "#/definitions/comment" } },
+      "properties": {
+        "description": { "type": "string" },
+        "profile": { "type": "string", "description": "Profile name. Falls back to defaults.profile." },
+        "templates": { "$ref": "#/definitions/templates" },
+        "envs": {
+          "type": "object",
+          "description": "Env name -> instance URL, or an array of instance URLs.",
+          "patternProperties": { "^\\.comment": { "$ref": "#/definitions/comment" } },
+          "additionalProperties": {
+            "oneOf": [
+              { "$ref": "#/definitions/url" },
+              { "type": "array", "minItems": 1, "uniqueItems": true, "items": { "$ref": "#/definitions/url" } }
+            ]
+          }
+        }
+      }
+    },
+    "url": {
+      "type": "string",
+      "pattern": "^https?://[^/?#]+[^?#]*$",
+      "description": "Instance base URL (http or https, no query or fragment)."
+    }
+  }
+}

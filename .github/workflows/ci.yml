@@ -1,0 +1,41 @@
+name: ci
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  test:
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, macos-latest, windows-latest]
+    runs-on: ${{ matrix.os }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-go@v5
+        with:
+          go-version: stable
+      - run: go vet ./...
+      - run: go test ./...
+
+  # Go cross-compiles, so one Linux job builds the binaries for every OS/arch.
+  # Download them from the run's "Artifacts" section.
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-go@v5
+        with:
+          go-version: stable
+      - run: sh .github/release-build.sh "dev-${GITHUB_SHA::7}"
+        shell: bash
+      - uses: actions/upload-artifact@v4
+        with:
+          name: envtally-binaries
+          path: dist/*
+          retention-days: 14

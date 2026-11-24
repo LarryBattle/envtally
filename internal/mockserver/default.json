@@ -1,0 +1,158 @@
+{
+  "defaultProfile": "mixed",
+  "domain": "example.com",
+  "envs": [
+    { "name": "dev", "version": "1.5.0", "revision": "c3d4e5f", "instances": 2 },
+    { "name": "test", "version": "1.4.2", "revision": "a1b2c3d", "instances": 2 },
+    { "name": "prod", "version": "1.4.1", "revision": "9f8e7d6", "instances": 3 }
+  ],
+  "types": {
+    "node": {
+      "description": "Express service with /healthz and /meta (an app type defined in this file)",
+      "profile": {
+        "description": "Express services with /healthz and /meta",
+        "healthPath": "/healthz",
+        "infoPath": "/meta",
+        "healthyWhen": { "field": "ok", "equals": "true" },
+        "groupKey": "${version}|${build.sha}"
+      },
+      "endpoints": {
+        "/healthz": { "body": { "ok": true, "uptime": 86400 } },
+        "/meta": { "body": { "name": "${name}", "version": "${version}", "build": { "sha": "${revision}" } } }
+      },
+      "states": {
+        "down": {
+          "/healthz": { "status": 503, "body": { "ok": false, "error": "redis: connection refused" } }
+        },
+        "partial": {
+          "/meta": { "body": { "name": "${name}", "version": "${version}" } }
+        }
+      }
+    }
+  },
+  "profiles": {
+    "healthy": {
+      "description": "Every app is up and in sync in every env.",
+      "apps": {
+        "flask-catalog": {},
+        "rails-storefront": {},
+        "springboot-ledger": {},
+        "springboot-payments": {}
+      }
+    },
+    "drift": {
+      "description": "A rollout is halfway through prod: some instances run the next version.",
+      "apps": {
+        "flask-catalog": {
+          "overrides": { "prod/na1": { "version": "1.4.2" } }
+        },
+        "rails-storefront": {
+          "overrides": { "prod/na2": { "revision": "0b5e1f2" } }
+        },
+        "springboot-ledger": {},
+        "springboot-payments": {
+          "overrides": { "prod/na2": { "version": "1.4.2", "revision": "a1b2c3d" } }
+        }
+      }
+    },
+    "outage": {
+      "description": "Typical failures: a failing health check, a missing info endpoint, incomplete info.",
+      "apps": {
+        "flask-catalog": {
+          "overrides": { "dev": { "state": "noinfo" } }
+        },
+        "rails-storefront": {
+          "overrides": { "test": { "state": "down" } }
+        },
+        "springboot-ledger": {
+          "overrides": { "test": { "state": "partial" } }
+        },
+        "springboot-payments": {
+          "overrides": { "prod/na2": { "state": "down" } }
+        }
+      }
+    },
+    "statuses": {
+      "description": "Apps answering with 2xx, 3xx, 4xx and 5xx statuses, each with that app type's usual body.",
+      "apps": {
+        "flask-catalog": {
+          "overrides": { "dev": { "status": 202 }, "test": { "status": 404 } }
+        },
+        "rails-storefront": {
+          "overrides": { "dev": { "status": 500 }, "prod": { "status": 302 } }
+        },
+        "springboot-ledger": {
+          "overrides": { "test": { "status": 401 } }
+        },
+        "springboot-payments": {
+          "overrides": { "dev": { "status": 503 }, "test": { "status": 302 } }
+        }
+      }
+    },
+    "slow": {
+      "description": "One targeted app/env answers slowly: rails-storefront in prod, instance na2.",
+      "apps": {
+        "flask-catalog": {},
+        "rails-storefront": {
+          "overrides": { "prod/na2": { "delay": "600ms" } }
+        },
+        "springboot-ledger": {},
+        "springboot-payments": {}
+      }
+    },
+    "custom": {
+      "description": "A config-defined app type (node) and custom responses for single endpoints.",
+      "apps": {
+        "flask-catalog": {
+          "overrides": {
+            "dev": {
+              "responses": {
+                "/info": { "contentType": "text/html; charset=utf-8", "body": "<h1>${name} is down for maintenance</h1>\n" }
+              }
+            }
+          }
+        },
+        "node-gateway": {
+          "overrides": { "test": { "state": "down" } }
+        },
+        "rails-storefront": {},
+        "springboot-payments": {
+          "overrides": {
+            "test": {
+              "responses": {
+                "/actuator/health": {
+                  "status": 503,
+                  "headers": { "Retry-After": "120" },
+                  "body": { "status": "OUT_OF_SERVICE", "groups": ["liveness", "readiness"] }
+                }
+              }
+            },
+            "prod/na2": {
+              "responses": { "/actuator/info": { "status": 500 } }
+            }
+          }
+        }
+      }
+    },
+    "mixed": {
+      "description": "A bit of everything, to see each status envtally reports side by side.",
+      "apps": {
+        "flask-catalog": {
+          "overrides": { "prod/na1": { "version": "1.4.2" }, "dev": { "state": "noinfo" } }
+        },
+        "node-gateway": {
+          "overrides": { "test": { "state": "partial" } }
+        },
+        "rails-storefront": {
+          "overrides": { "test": { "status": 302 } }
+        },
+        "springboot-ledger": {
+          "overrides": { "dev": { "status": 401 } }
+        },
+        "springboot-payments": {
+          "overrides": { "prod/na2": { "state": "down" } }
+        }
+      }
+    }
+  }
+}

@@ -1,0 +1,30 @@
+{
+  "$schema": "../envtally.schema.json",
+  "defaults": { "profile": "flask" },
+  "envOrder": ["dev", "test", "prod"],
+  "templates": {
+    "jenkins": "https://jenkins.example.com/job/${project}/job/${app}/"
+  },
+  "profiles": {
+    "flask": {
+      "healthPath": "/health",
+      "infoPath": "/info",
+      "healthyWhen": { "field": "status", "equals": "ok" },
+      "groupKey": "${version}"
+    }
+  },
+  "projects": {
+    "shop": {
+      "description": "Flask: /health returns {\"status\":\"ok\"} and /info returns {\"version\":\"...\"}. Both are endpoints you add.",
+      "apps": {
+        "catalog": {
+          "envs": {
+            "dev": ["https://catalog.dev.a.example.com", "https://catalog.dev.b.example.com"],
+            "test": "https://catalog.test.example.com",
+            "prod": ["https://catalog.a.example.com", "https://catalog.b.example.com"]
+          }
+        }
+      }
+    }
+  }
+}
