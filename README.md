@@ -1,3 +1,7 @@
+<p align="center">
+  <img src="envtally-logo.svg" alt="envtally logo" width="128" height="128">
+</p>
+
 # envtally
 
 [![ci](https://github.com/LarryBattle/envtally/actions/workflows/ci.yml/badge.svg)](https://github.com/LarryBattle/envtally/actions/workflows/ci.yml)

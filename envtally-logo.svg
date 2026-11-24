@@ -1,0 +1,18 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="384" height="384" viewBox="64 64 384 384" role="img" aria-labelledby="title desc">
+  <title id="title">envtally</title>
+  <desc id="desc">Nine rounded squares in a three-by-three grid: eight emerald instances and one orange instance offset at the bottom right.</desc>
+  <defs>
+    <rect id="i" width="96" height="96" rx="18"/>
+  </defs>
+  <g fill="#059669">
+    <use href="#i" x="72" y="72"/>
+    <use href="#i" x="200" y="72"/>
+    <use href="#i" x="328" y="72"/>
+    <use href="#i" x="72" y="200"/>
+    <use href="#i" x="200" y="200"/>
+    <use href="#i" x="328" y="200"/>
+    <use href="#i" x="72" y="328"/>
+    <use href="#i" x="200" y="328"/>
+  </g>
+  <use href="#i" x="344" y="344" fill="#FF7900"/>
+</svg>

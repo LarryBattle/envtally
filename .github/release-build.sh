@@ -7,7 +7,10 @@ version="${1:-dev}"
 version="${version#v}" # tag v1.2.3 -> 1.2.3
 commit="$(git rev-parse --short HEAD 2>/dev/null || echo none)"
 date="$(date -u +%Y-%m-%dT%H:%M:%SZ)"
-extras="README.md LICENSE envtally.schema.json envtally.example.json envtally.example.full.json examples"
+# The starter configs are left out: they are embedded in the binary and written
+# by `envtally init`. The schema stays at the top so the "$schema" paths in
+# examples/ resolve.
+extras="README.md LICENSE envtally.schema.json examples"
 
 rm -rf dist
 mkdir -p dist
